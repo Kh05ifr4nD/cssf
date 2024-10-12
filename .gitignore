@@ -1,3 +1,5 @@
 .devenv
 .direnv
+.venv
 .ruff_cache
+__pycache__

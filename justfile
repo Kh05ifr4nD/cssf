@@ -7,11 +7,11 @@ set shell := ["nu", "-c"]
 
 [group('dev')]
 check:
-  ruff check; nix flake check --impure --show-trace
+  ruff check; nix flake check --show-trace
 
 [group('dev')]
 dev:
-  nix develop --impure --show-trace -c nu
+  nix develop --show-trace 
 
 [group('main')]
 run:
@@ -19,7 +19,7 @@ run:
 
 [group('dev')]
 fmt:
-  ruff format; nix fmt --impure
+  ruff format; nix fmt 
 
 [group('cfg')]
 self:
