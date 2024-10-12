@@ -1,33 +1,24 @@
 set shell := ["nu", "-c"]
 
-# 枚举配方
 @default: ls
   echo " "
   just --list
 
 [group('dev')]
-check:
+ck:
   ruff check; nix flake check --show-trace
 
 [group('dev')]
 dev:
-  nix develop --show-trace 
+  nix develop --show-trace -c nu
 
-[group('main')]
-run:
-  sage main.py
+[group('cfg')]
+fla:
+  ^$env.EDITOR flake.nix
 
 [group('dev')]
 fmt:
-  ruff format; nix fmt 
-
-[group('cfg')]
-self:
-  ^$env.EDITOR justfile
-
-[group('cfg')]
-flake:
-  ^$env.EDITOR flake.nix
+  ruff format; nix fmt
 
 [group('prj')]
 @ls:
@@ -35,3 +26,15 @@ flake:
   echo " "
   git --version
   git status
+
+[group('main')]
+run:
+  sage main.py
+
+[group('cfg')]
+self:
+  ^$env.EDITOR justfile
+
+[group('dev')]
+upd:
+  nix flake update

@@ -1,14 +1,11 @@
 {
   inputs = {
     flake-parts.url = "github:hercules-ci/flake-parts";
+    flake-root.url = "github:srid/flake-root";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     systems.url = "github:nix-systems/default";
+    treefmt-nix.url = "github:numtide/treefmt-nix";
   };
-  nixConfig = {
-    extra-trusted-public-keys = "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=";
-    extra-substituters = "https://devenv.cachix.org";
-  };
-
   outputs =
     inputs@{
       flake-parts,
@@ -16,6 +13,10 @@
       ...
     }:
     flake-parts.lib.mkFlake { inherit inputs; } {
+      imports = [
+        inputs.flake-root.flakeModule
+        inputs.treefmt-nix.flakeModule
+      ];
       perSystem =
         {
           config,
@@ -31,26 +32,34 @@
             buildInputs = with pkgs; [
               qt6.qtbase
               qt6.full
-              qtcreator
-            ];
-            nativeBuildInputs = with pkgs; [
-              qt6.wrapQtAppsHook
-            ];
-            packages = with pkgs; [
               (sage.override {
                 extraPythonPackages =
                   ps: with ps; [
                     loguru
-                    pygobject3
                     pyside6
                     qt-material
                   ];
                 requireSageTests = false;
               })
             ];
+            inputsFrom = [
+              config.flake-root.devShell
+              config.treefmt.build.devShell
+            ];
+            nativeBuildInputs = with pkgs; [
+              qt6.wrapQtAppsHook
+            ];
+            packages = with pkgs; [
+              ruff
+            ];
             shellHook = '''';
           };
-          formatter = pkgs.nixfmt-rfc-style;
+          treefmt.config = {
+            inherit (config.flake-root) projectRootFile;
+            programs = {
+              nixfmt.enable = true;
+            };
+          };
         };
       systems = import inputs.systems;
     };
