@@ -49,15 +49,17 @@
             nativeBuildInputs = with pkgs; [
               qt6.wrapQtAppsHook
             ];
-            packages = with pkgs; [
-              ruff
-            ];
+            packages =
+              with pkgs;
+              [
+              ];
             shellHook = '''';
           };
           treefmt.config = {
             inherit (config.flake-root) projectRootFile;
             programs = {
               nixfmt.enable = true;
+              ruff.enable = true;
             };
           };
         };

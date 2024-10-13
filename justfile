@@ -18,7 +18,7 @@ fla:
 
 [group('dev')]
 fmt:
-  ruff format; nix fmt
+ nix fmt
 
 [group('prj')]
 @ls:
