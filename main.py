@@ -21,6 +21,7 @@ class MainWin(QMainWindow):
 
         self._init_ui()
         self.cnct_sgl()
+        
 
     def _init_ui(self):
         self.setup_anime()
@@ -45,14 +46,16 @@ class MainWin(QMainWindow):
     def cnct_sgl(self):
         self.ui.pnl_btn.toggled["bool"].connect(self.tgl_pnl)
         self._cnct_page_btn()
-        self.ui.theme_cb.currentTextChanged.connect(self.chg_th)
+        self.ui.主题_cb.currentTextChanged.connect(self.chg_th)
 
     def _cnct_page_btn(self):
         btn_list = [
             (self.ui.home_btn, 0),
-            (self.ui.usr_btn, 1),
-            (self.ui.stg_btn, 2),
-            (self.ui.about_btn, 3),
+            (self.ui.rsa_btn, 1),
+            (self.ui.crt_rsa_btn, 2),
+            (self.ui.usr_btn, 3),
+            (self.ui.stg_btn, 4),
+            (self.ui.about_btn, 5),
         ]
         for btn, idx in btn_list:
             btn.clicked.connect(
@@ -92,7 +95,9 @@ class MainWin(QMainWindow):
 
 
 if __name__ == "__main__":
-    cfg = Cfg([{"name": "主页", "icon": "主页.png"}])
+    cfg = Cfg(
+        [{"name": "主页", "icon": "主页.png"}, {"name": "RSA", "icon": "RSA.png"}]
+    )
     app = QApplication(sys.argv)
     win = MainWin(cfg)
     win.show()

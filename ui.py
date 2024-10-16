@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (
     QSizePolicy,
     QSpacerItem,
     QStackedWidget,
+    QTextEdit,
     QVBoxLayout,
     QWidget,
 )
@@ -48,9 +49,14 @@ class MainWinIniter:
     def _setup_sidebar_frm(self, cfg: Cfg):
         self.sidebar_frm = QFrame()
         self.sidebar_frm.setObjectName("sidebar_frm")
-        self.sidebar_frm.setStyleSheet(
-            "QFrame#sidebar_frm {border: 2px solid #34495E;}"
-        )
+        self.sidebar_frm.setStyleSheet("""QFrame#sidebar_frm {
+            background-color: #2F4F4F;
+            border: 2px solid #00CA9A; 
+            border-radius: 12px; 
+            border-left: 0px; 
+            border-top-left-radius: 0px; 
+            border-bottom-left-radius: 0px;
+        }""")
 
         sizePolicy = QSizePolicy(
             QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Preferred
@@ -75,9 +81,11 @@ class MainWinIniter:
             ("icon_lbl", f"{cfg.icon_dir}/徽标.png", 0, 0),
             ("pnl_btn", f"{cfg.icon_dir}/展开面板.png", 1, 0),
             ("home_btn", f"{cfg.icon_dir}/主页.png", 2, 0),
-            ("usr_btn", f"{cfg.icon_dir}/用户.png", 4, 0),
-            ("stg_btn", f"{cfg.icon_dir}/设置.png", 5, 0),
-            ("about_btn", f"{cfg.icon_dir}/关于.png", 6, 0),
+            ("rsa_btn", f"{cfg.icon_dir}/RSA.png", 3, 0),
+            ("crt_rsa_btn", f"{cfg.icon_dir}/CRT-RSA.png", 4, 0),
+            ("usr_btn", f"{cfg.icon_dir}/用户.png", 6, 0),
+            ("stg_btn", f"{cfg.icon_dir}/设置.png", 7, 0),
+            ("about_btn", f"{cfg.icon_dir}/关于.png", 8, 0),
         ]
 
         for name, icon_path, row, col in buttons:
@@ -111,9 +119,11 @@ class MainWinIniter:
         labels = [
             ("tit_lbl", 0, 1),
             ("home_lbl", 2, 1),
-            ("usr_lbl", 4, 1),
-            ("stg_lbl", 5, 1),
-            ("about_lbl", 6, 1),
+            ("rsa_lbl", 3, 1),
+            ("crt_rsa_lbl", 4, 1),
+            ("usr_lbl", 6, 1),
+            ("stg_lbl", 7, 1),
+            ("about_lbl", 8, 1),
         ]
 
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
@@ -135,14 +145,14 @@ class MainWinIniter:
         spacers = [
             (
                 "icon_vspc",
-                3,
+                5,
                 0,
                 QSizePolicy.Policy.Expanding,
                 QSizePolicy.Policy.Minimum,
             ),
             (
                 "ext_vspc",
-                3,
+                5,
                 1,
                 QSizePolicy.Policy.Minimum,
                 QSizePolicy.Policy.Expanding,
@@ -197,7 +207,14 @@ class MainWinIniter:
         self.page_stk = QStackedWidget(self.cent)
         self.page_stk.setObjectName("page_stk")
 
-        pages = ["home_page", "usr_page", "stg_page", "about_page"]
+        pages = [
+            "home_page",
+            "rsa_page",
+            "crt_rsa_page",
+            "usr_page",
+            "stg_page",
+            "about_page",
+        ]
 
         for page in pages:
             widget = QWidget()
@@ -205,9 +222,189 @@ class MainWinIniter:
             self.page_stk.addWidget(widget)
             setattr(self, page, widget)
 
+        self._setup_rsa_page(cfg)
+        self._setup_crt_rsa_page(cfg)
         self._setup_stg_page(cfg)
 
         self.cent_glo.addWidget(self.page_stk, 1, 1, 1, 1)
+
+    def _setup_rsa_page(self, cfg: Cfg):
+        self.rsa_hlo = QHBoxLayout(self.rsa_page)
+        self.rsa_hlo.setObjectName("rsa_hlo")
+        self.parma_cont = QWidget()
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
+        self.parma_cont.setSizePolicy(sizePolicy)
+        self.parma_cont.setFixedWidth(480)
+        sizePolicy = QSizePolicy(
+            QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Preferred
+        )
+        self.parma_cont.setSizePolicy(sizePolicy)
+
+        self.parma_vlo = QVBoxLayout(self.parma_cont)
+        self.parma_vlo.setSpacing(4)
+        self.parma_vlo.setContentsMargins(0, 0, 0, 0)
+
+        # 添加新的水平组合
+        attack_frm = QFrame()
+        attack_frm.setMinimumHeight(64)
+        attack_hlo = QHBoxLayout(attack_frm)
+        attack_hlo.setContentsMargins(12, 0, 12, 0)
+        attack_hlo.setSpacing(16)
+        attack_hlo.setAlignment(Qt.AlignLeft)
+        attack_lbl = QLabel("攻击方法")
+        attack_lbl.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        attack_lbl.setMinimumWidth(96)
+        attack_lbl.setStyleSheet("QLabel {font-size: 12pt;}")
+        attack_cb = QComboBox()
+        attack_cb.setFixedWidth(120)
+        attack_cb.setStyleSheet("QComboBox { background-color: #8A8A8A; }")
+        attack_cb.setObjectName("rsa_attack_cb")
+        attack_cb.setMinimumHeight(40)
+        attack_cb.addItems(["May", "BD"])  # 添加攻击方法选项
+        setattr(self, "rsa_attack_cb", attack_cb)
+        attack_hlo.addWidget(attack_lbl)
+        attack_hlo.addWidget(attack_cb)
+        self.parma_vlo.addWidget(attack_frm)
+
+        params = ["N", "e", "d_len", "msb_len", "lsb_len", "m", "t", "d_msb", "d_lsb"]
+        params_name = [
+            "模数 N",
+            "公钥 e",
+            "私钥 d 长度",
+            "MSB 长度",
+            "LSB 长度",
+            "m",
+            "t",
+            "私钥 MSB",
+            "私钥 LSB",
+        ]
+        for param, name in zip(params, params_name):
+            param_frm = QFrame()
+            param_frm.setMinimumHeight(64)
+            param_hlo = QHBoxLayout(param_frm)
+            param_hlo.setContentsMargins(12, 0, 12, 0)
+            param_hlo.setSpacing(16)
+            param_lbl = QLabel(name)
+            param_lbl.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            param_lbl.setMinimumWidth(96)
+            param_lbl.setStyleSheet("QLabel {font-size: 12pt;}")
+            param_le = QLineEdit()
+            param_le.setStyleSheet("QLineEdit { background-color: #8A8A8A; }")
+            param_le.setObjectName(f"rsa_{param}_le")
+            param_le.setMinimumHeight(40)
+            setattr(self, f"rsa_{param}_le", param_le)
+            param_hlo.addWidget(param_lbl)
+            param_hlo.addWidget(param_le)
+            self.parma_vlo.addWidget(param_frm)
+
+        self.parma_vlo.addStretch(1)
+        self.parma_vlo.addItem(
+            QSpacerItem(0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        )
+        self.rsa_confirm_btn = QPushButton("开始攻击")
+        self.rsa_confirm_btn.setObjectName("rsa_confirm_btn")
+        self.rsa_confirm_btn.setMinimumSize(cfg.btn_size)
+        self.parma_vlo.addWidget(self.rsa_confirm_btn)
+        self.rsa_hlo.addWidget(self.parma_cont)
+        self.rsa_text_display = QTextEdit()
+        self.rsa_text_display.setObjectName("rsa_text_display")
+        self.rsa_text_display.setReadOnly(True)
+
+        size_policy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.rsa_text_display.setSizePolicy(size_policy)
+
+        self.rsa_hlo.addWidget(self.rsa_text_display)
+
+    def _setup_crt_rsa_page(self, cfg: Cfg):
+        self.crt_rsa_hlo = QHBoxLayout(self.crt_rsa_page)
+        self.crt_rsa_hlo.setObjectName("crt_rsa_hlo")
+        self.crt_parma_cont = QWidget()
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
+        self.crt_parma_cont.setSizePolicy(sizePolicy)
+        self.crt_parma_cont.setFixedWidth(480)
+        self.crt_parma_vlo = QVBoxLayout(self.crt_parma_cont)
+        self.crt_parma_vlo.setSpacing(4)
+        self.crt_parma_vlo.setContentsMargins(0, 0, 0, 0)
+
+        # 添加新的水平组合
+        attack_frm = QFrame()
+        attack_frm.setMinimumHeight(64)
+        attack_hlo = QHBoxLayout(attack_frm)
+        attack_hlo.setContentsMargins(12, 0, 12, 0)
+        attack_hlo.setSpacing(16)
+        attack_hlo.setAlignment(Qt.AlignLeft)
+        attack_lbl = QLabel("攻击方法")
+        attack_lbl.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        attack_lbl.setMinimumWidth(96)
+        attack_lbl.setStyleSheet("QLabel {font-size: 12pt;}")
+        attack_cb = QComboBox()
+        attack_cb.setFixedWidth(120)
+        attack_cb.setStyleSheet("QComboBox { background-color: #8A8A8A; }")
+        attack_cb.setObjectName("crt_rsa_attack_cb")
+        attack_cb.setMinimumHeight(40)
+        attack_cb.addItems(["BM", "TLP"])
+        setattr(self, "crt_rsa_attack_cb", attack_cb)
+        attack_hlo.addWidget(attack_lbl)
+        attack_hlo.addWidget(attack_cb)
+        self.crt_parma_vlo.addWidget(attack_frm)
+
+        crt_params = [
+            "N",
+            "e",
+            "dp_len",
+            "dq_len",
+            "lsb_len",
+            "dp_msb",
+            "dq_msb," "dp_lsb",
+            "dq_lsb",
+        ]
+        crt_params_name = [
+            "模数 N",
+            "公钥 e",
+            "d<sub>p</sub> 长度",
+            "LSB 长度",
+            "d<sub>p</sub> MSB",
+            "d<sub>q</sub> MSB",
+            "d<sub>p</sub> LSB",
+            "d<sub>q</sub> LSB",
+        ]
+        for param, name in zip(crt_params, crt_params_name):
+            param_frm = QFrame()
+            param_frm.setMinimumHeight(64)
+            param_hlo = QHBoxLayout(param_frm)
+            param_hlo.setContentsMargins(12, 0, 12, 0)
+            param_hlo.setSpacing(16)
+            param_lbl = QLabel(name)
+            param_lbl.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            param_lbl.setMinimumWidth(96)
+            param_lbl.setStyleSheet("QLabel {font-size: 12pt;}")
+            param_le = QLineEdit()
+            param_le.setStyleSheet("QLineEdit { background-color: #8A8A8A; }")
+            param_le.setMinimumHeight(40)
+            setattr(self, f"crt_rsa_{param}_le", param_le)
+
+            param_hlo.addWidget(param_lbl)
+            param_hlo.addWidget(param_le)
+            self.crt_parma_vlo.addWidget(param_frm)
+
+        self.crt_parma_vlo.addStretch(1)
+        self.crt_parma_vlo.addItem(
+            QSpacerItem(0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        )
+        self.crt_rsa_confirm_btn = QPushButton("开始攻击")
+        self.crt_rsa_confirm_btn.setObjectName("crt_rsa_confirm_btn")
+        self.crt_rsa_confirm_btn.setMinimumSize(cfg.btn_size)
+        self.crt_parma_vlo.addWidget(self.crt_rsa_confirm_btn)
+
+        self.crt_rsa_hlo.addWidget(self.crt_parma_cont)
+        self.crt_rsa_text_display = QTextEdit()
+        self.crt_rsa_text_display.setObjectName("crt_rsa_text_display")
+        self.crt_rsa_text_display.setReadOnly(True)
+
+        size_policy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.crt_rsa_text_display.setSizePolicy(size_policy)
+
+        self.crt_rsa_hlo.addWidget(self.crt_rsa_text_display)
 
     def _setup_stg_page(self, cfg: Cfg):
         self.stg_scroll_area = QScrollArea(self.stg_page)
@@ -292,6 +489,10 @@ class MainWinIniter:
     def retranslateUi(self, main_win: QMainWindow):
         main_win.setWindowTitle(
             QCoreApplication.translate("Genshin Impact", "原神", None)
+        )
+        self.rsa_lbl.setText(QCoreApplication.translate("main_win", "RSA 攻击", None))
+        self.crt_rsa_lbl.setText(
+            QCoreApplication.translate("main_win", "CRT-RSA 攻击", None)
         )
         self.usr_lbl.setText(QCoreApplication.translate("main_win", "用户", None))
         self.tit_lbl.setText(QCoreApplication.translate("main_win", "原神", None))

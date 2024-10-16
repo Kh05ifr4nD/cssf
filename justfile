@@ -21,6 +21,19 @@ fmt:
  nix fmt
 
 [group('prj')]
+init:
+  #!/usr/bin/env nu
+  if not (".venv" | path exists) {  
+    print "正在创建虚拟环境"
+    uv venv
+  }
+  if not ("pyproject.toml" | path exists) {
+    print "正在初始化项目"
+    uv init
+  } 
+  print "初始化已完成"
+
+[group('prj')]
 @ls:
   ls -afm
   echo " "
@@ -29,7 +42,7 @@ fmt:
 
 [group('main')]
 run:
-  sage main.py
+  python main.py
 
 [group('cfg')]
 self:

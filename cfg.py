@@ -15,7 +15,7 @@ class Cfg:
     opt_icon_size: QSize = QSize(48, 48)
     lbl_size: QSize = QSize(144, 48)
     srch_le_min_size: QSize = QSize(200, 48)
-    win_min_size: QSize = QSize(640, 480)
+    win_min_size: QSize = QSize(1280, 800)
 
     anime_dur: int = 150
     vis_dly: int = 80
@@ -23,7 +23,7 @@ class Cfg:
     stg_grp_list: OrderedDict[str, List[Tuple[str, str, Union[List[str], bool]]]] = (
         field(
             default_factory=lambda: OrderedDict(
-                [("个性化", [("theme", "主题.png", list_themes())])]
+                [("个性化", [("主题", "主题.png", list_themes())])]
             )
         )
     )
