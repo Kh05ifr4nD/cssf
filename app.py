@@ -5,11 +5,13 @@ from PySide6.QtCore import (
     QParallelAnimationGroup,
     QTimer,
 )
+from sage.all import *
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QMainWindow, QLabel
 from ui import MainWinIniter
 from qt_material import apply_stylesheet
-from cfg import Cfg
+from src.cfg import Cfg
+from src.ernst05 import mixed_1, mixed_2
 
 
 class MainWin(QMainWindow):
@@ -21,7 +23,6 @@ class MainWin(QMainWindow):
 
         self._init_ui()
         self.cnct_sgl()
-        
 
     def _init_ui(self):
         self.setup_anime()
@@ -46,7 +47,42 @@ class MainWin(QMainWindow):
     def cnct_sgl(self):
         self.ui.pnl_btn.toggled["bool"].connect(self.tgl_pnl)
         self._cnct_page_btn()
+        self._cnct_atk_btn()
         self.ui.主题_cb.currentTextChanged.connect(self.chg_th)
+
+    def _cnct_atk_btn(self):
+        self.ui.atk_btn.clicked.connect(self._exec_atk)
+
+    def _exec_atk(self):
+        攻击方法序列 = self.ui.atk_cb.currentIndex()
+        攻击函数 = [
+            self._attack_function_1,
+            self._attack_function_2,
+            self.ernst05,
+        ]
+
+        if 0 <= 攻击方法序列 < len(攻击函数):
+            攻击函数[攻击方法序列]()
+        else:
+            print("无效的攻击选项")
+
+    def _attack_function_1(self):
+        print("执行攻击函数1")
+
+    def _attack_function_2(self):
+        print("执行攻击函数2")
+
+    def ernst05(self):
+        mixed_1(
+            Integer(self.ui.N_le.text()),
+            Integer(self.ui.e_le.text()),
+            (Integer(self.ui.d_msb_le.text()), Integer(self.ui.d_lsb_le.text())),
+            (
+                Integer(self.ui.d_len_le.text()),
+                Integer(self.ui.msb_len_le.text()),
+                Integer(self.ui.lsb_len_le.text()),
+            ),
+        )
 
     def _cnct_page_btn(self):
         btn_list = [

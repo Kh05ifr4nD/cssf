@@ -49,12 +49,7 @@
             nativeBuildInputs = with pkgs; [
               qt6.wrapQtAppsHook
             ];
-            packages = with pkgs; [
-              uv
-            ];
-            shellHook = ''
-              source .venv/bin/activate
-            '';
+            shellHook = '''';
           };
           treefmt.config = {
             inherit (config.flake-root) projectRootFile;

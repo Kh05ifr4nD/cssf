@@ -7,7 +7,7 @@ from qt_material import list_themes
 @dataclass(frozen=True)
 class Cfg:
     menu_page_items: List[Dict[str, str]]
-    icon_dir: str = "./icons"
+    icon_dir: str = "./assets/"
     dflt_th_xml: str = "dark_teal.xml"
 
     btn_size: QSize = QSize(48, 48)

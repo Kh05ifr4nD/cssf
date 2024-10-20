@@ -1,7 +1,0 @@
-[project]
-name = "cssf"
-version = "0.1.0"
-description = "Genshin Impact"
-readme = "README.md"
-requires-python = ">=3.11"
-dependencies = []

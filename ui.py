@@ -18,23 +18,21 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from cfg import Cfg
+from src.cfg import Cfg
 
 
 class MainWinIniter:
     def setup_ui(self, main_win: QMainWindow):
-        self._setup_main_win(main_win)
+        if not main_win.objectName():
+            main_win.setObjectName("main_win")
+        main_win.setMinimumSize(main_win.cfg.win_min_size)
+        main_win.setWindowIcon(QIcon(f"{main_win.cfg.icon_dir}/徽标.png"))
+
         self._setup_cent(main_win)
         self._setup_sidebar_frm(main_win.cfg)
         self._setup_srch_hlo(main_win.cfg)
         self._setup_page_stk(main_win.cfg)
         self._finalize_lo(main_win)
-
-    def _setup_main_win(self, main_win: QMainWindow):
-        if not main_win.objectName():
-            main_win.setObjectName("main_win")
-        main_win.setMinimumSize(main_win.cfg.win_min_size)
-        main_win.setWindowIcon(QIcon(f"{main_win.cfg.icon_dir}/徽标.png"))
 
     def _setup_cent(self, main_win: QMainWindow):
         self.cent = QWidget(main_win)
@@ -245,26 +243,26 @@ class MainWinIniter:
         self.parma_vlo.setContentsMargins(0, 0, 0, 0)
 
         # 添加新的水平组合
-        attack_frm = QFrame()
-        attack_frm.setMinimumHeight(64)
-        attack_hlo = QHBoxLayout(attack_frm)
-        attack_hlo.setContentsMargins(12, 0, 12, 0)
-        attack_hlo.setSpacing(16)
-        attack_hlo.setAlignment(Qt.AlignLeft)
-        attack_lbl = QLabel("攻击方法")
-        attack_lbl.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
-        attack_lbl.setMinimumWidth(96)
-        attack_lbl.setStyleSheet("QLabel {font-size: 12pt;}")
-        attack_cb = QComboBox()
-        attack_cb.setFixedWidth(120)
-        attack_cb.setStyleSheet("QComboBox { background-color: #8A8A8A; }")
-        attack_cb.setObjectName("rsa_attack_cb")
-        attack_cb.setMinimumHeight(40)
-        attack_cb.addItems(["May", "BD"])  # 添加攻击方法选项
-        setattr(self, "rsa_attack_cb", attack_cb)
-        attack_hlo.addWidget(attack_lbl)
-        attack_hlo.addWidget(attack_cb)
-        self.parma_vlo.addWidget(attack_frm)
+        atk_frm = QFrame()
+        atk_frm.setMinimumHeight(64)
+        atk_hlo = QHBoxLayout(atk_frm)
+        atk_hlo.setContentsMargins(12, 0, 12, 0)
+        atk_hlo.setSpacing(16)
+        atk_hlo.setAlignment(Qt.AlignLeft)
+        atk_lbl = QLabel("攻击方法")
+        atk_lbl.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        atk_lbl.setMinimumWidth(96)
+        atk_lbl.setStyleSheet("QLabel {font-size: 12pt;}")
+        atk_cb = QComboBox()
+        atk_cb.setFixedWidth(120)
+        atk_cb.setStyleSheet("QComboBox { background-color: #8A8A8A; }")
+        atk_cb.setObjectName("atk_cb")
+        atk_cb.setMinimumHeight(40)
+        atk_cb.addItems(["May", "BD", "Ernst"])  # 添加攻击方法选项
+        setattr(self, "atk_cb", atk_cb)
+        atk_hlo.addWidget(atk_lbl)
+        atk_hlo.addWidget(atk_cb)
+        self.parma_vlo.addWidget(atk_frm)
 
         params = ["N", "e", "d_len", "msb_len", "lsb_len", "m", "t", "d_msb", "d_lsb"]
         params_name = [
@@ -292,7 +290,7 @@ class MainWinIniter:
             param_le.setStyleSheet("QLineEdit { background-color: #8A8A8A; }")
             param_le.setObjectName(f"rsa_{param}_le")
             param_le.setMinimumHeight(40)
-            setattr(self, f"rsa_{param}_le", param_le)
+            setattr(self, f"{param}_le", param_le)
             param_hlo.addWidget(param_lbl)
             param_hlo.addWidget(param_le)
             self.parma_vlo.addWidget(param_frm)
@@ -301,10 +299,10 @@ class MainWinIniter:
         self.parma_vlo.addItem(
             QSpacerItem(0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         )
-        self.rsa_confirm_btn = QPushButton("开始攻击")
-        self.rsa_confirm_btn.setObjectName("rsa_confirm_btn")
-        self.rsa_confirm_btn.setMinimumSize(cfg.btn_size)
-        self.parma_vlo.addWidget(self.rsa_confirm_btn)
+        self.atk_btn = QPushButton("开始攻击")
+        self.atk_btn.setObjectName("atk_btn")
+        self.atk_btn.setMinimumSize(cfg.btn_size)
+        self.parma_vlo.addWidget(self.atk_btn)
         self.rsa_hlo.addWidget(self.parma_cont)
         self.rsa_text_display = QTextEdit()
         self.rsa_text_display.setObjectName("rsa_text_display")
@@ -327,26 +325,26 @@ class MainWinIniter:
         self.crt_parma_vlo.setContentsMargins(0, 0, 0, 0)
 
         # 添加新的水平组合
-        attack_frm = QFrame()
-        attack_frm.setMinimumHeight(64)
-        attack_hlo = QHBoxLayout(attack_frm)
-        attack_hlo.setContentsMargins(12, 0, 12, 0)
-        attack_hlo.setSpacing(16)
-        attack_hlo.setAlignment(Qt.AlignLeft)
-        attack_lbl = QLabel("攻击方法")
-        attack_lbl.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
-        attack_lbl.setMinimumWidth(96)
-        attack_lbl.setStyleSheet("QLabel {font-size: 12pt;}")
-        attack_cb = QComboBox()
-        attack_cb.setFixedWidth(120)
-        attack_cb.setStyleSheet("QComboBox { background-color: #8A8A8A; }")
-        attack_cb.setObjectName("crt_rsa_attack_cb")
-        attack_cb.setMinimumHeight(40)
-        attack_cb.addItems(["BM", "TLP"])
-        setattr(self, "crt_rsa_attack_cb", attack_cb)
-        attack_hlo.addWidget(attack_lbl)
-        attack_hlo.addWidget(attack_cb)
-        self.crt_parma_vlo.addWidget(attack_frm)
+        crt_atk_frm = QFrame()
+        crt_atk_frm.setMinimumHeight(64)
+        crt_atk_hlo = QHBoxLayout(crt_atk_frm)
+        crt_atk_hlo.setContentsMargins(12, 0, 12, 0)
+        crt_atk_hlo.setSpacing(16)
+        crt_atk_hlo.setAlignment(Qt.AlignLeft)
+        crt_atk_lbl = QLabel("攻击方法")
+        crt_atk_lbl.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        crt_atk_lbl.setMinimumWidth(96)
+        crt_atk_lbl.setStyleSheet("QLabel {font-size: 12pt;}")
+        crt_atk_cb = QComboBox()
+        crt_atk_cb.setFixedWidth(120)
+        crt_atk_cb.setStyleSheet("QComboBox { background-color: #8A8A8A; }")
+        crt_atk_cb.setObjectName("crt_atk_cb")
+        crt_atk_cb.setMinimumHeight(40)
+        crt_atk_cb.addItems(["BM", "TLP"])
+        setattr(self, "crt_atk_cb", crt_atk_cb)
+        crt_atk_hlo.addWidget(crt_atk_lbl)
+        crt_atk_hlo.addWidget(crt_atk_cb)
+        self.crt_parma_vlo.addWidget(crt_atk_frm)
 
         crt_params = [
             "N",
@@ -391,10 +389,10 @@ class MainWinIniter:
         self.crt_parma_vlo.addItem(
             QSpacerItem(0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         )
-        self.crt_rsa_confirm_btn = QPushButton("开始攻击")
-        self.crt_rsa_confirm_btn.setObjectName("crt_rsa_confirm_btn")
-        self.crt_rsa_confirm_btn.setMinimumSize(cfg.btn_size)
-        self.crt_parma_vlo.addWidget(self.crt_rsa_confirm_btn)
+        self.crt_atk_btn = QPushButton("开始攻击")
+        self.crt_atk_btn.setObjectName("crt_atk_btn")
+        self.crt_atk_btn.setMinimumSize(cfg.btn_size)
+        self.crt_parma_vlo.addWidget(self.crt_atk_btn)
 
         self.crt_rsa_hlo.addWidget(self.crt_parma_cont)
         self.crt_rsa_text_display = QTextEdit()

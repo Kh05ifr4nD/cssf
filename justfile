@@ -18,20 +18,7 @@ fla:
 
 [group('dev')]
 fmt:
- nix fmt
-
-[group('prj')]
-init:
-  #!/usr/bin/env nu
-  if not (".venv" | path exists) {  
-    print "正在创建虚拟环境"
-    uv venv
-  }
-  if not ("pyproject.toml" | path exists) {
-    print "正在初始化项目"
-    uv init
-  } 
-  print "初始化已完成"
+  nix fmt
 
 [group('prj')]
 @ls:
@@ -42,7 +29,7 @@ init:
 
 [group('main')]
 run:
-  python main.py
+  python app.py
 
 [group('cfg')]
 self:
